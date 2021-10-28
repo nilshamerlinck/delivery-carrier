@@ -5,7 +5,7 @@ from os.path import dirname, join
 
 from vcr import VCR
 
-from odoo import exceptions
+from odoo import exceptions, tools
 
 from odoo.addons.delivery_postlogistics.tests.common import TestPostlogisticsCommon
 
@@ -79,6 +79,10 @@ class TestPostlogisticsDangerousGoods(TestPostlogisticsCommon):
         with self.assertRaises(exceptions.UserError):
             picking._generate_postlogistics_label()
 
+    # the cassette for this case contains a big response
+    # (the label) that is causing travis build to fail
+    # when logged, so we mute vcr
+    @tools.mute_logger("vcr.cassette")
     @recorder.use_cassette
     def test_confirm_right_unnumber(self):
         products = [(self.product_lq, 10.0)]
